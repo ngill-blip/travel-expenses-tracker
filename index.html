@@ -4,33 +4,37 @@
 <meta name="robots" content="noindex,nofollow"><title>Travel Expenses</title>
 <style>
 :root{color-scheme:light;--navy:#1f3864;--blue:#2e5496;--ink:#1a2330;--muted:#6b7785;
---line:#e4e8ef;--bg:#f4f6fa;--card:#fff;--green:#1f7a4d;--amber:#b26a00;--red:#c0392b}
+--line:#e4e8ef;--bg:#f4f6fa;--card:#fff;--green:#1f7a4d;--gbg:#e3f3ea;--amber:#b26a00;--abg:#fbeede;--red:#c0392b}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
-.wrap{max-width:1080px;margin:0 auto;padding:22px 16px 80px}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 90px}
 button{font:inherit;cursor:pointer}
 .btn{border:0;border-radius:8px;padding:9px 14px;font-weight:600;font-size:14px}
 .btn.p{background:var(--blue);color:#fff}.btn.g{background:#e9edf4;color:var(--navy)}
-.btn.r{background:#fbe6e3;color:var(--red)}.btn.sm{padding:5px 9px;font-size:12px;border-radius:6px}
-header.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.btn.r{background:#fbe6e3;color:var(--red)}.btn.sm{padding:6px 10px;font-size:12px;border-radius:6px}
+header.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
 h1{font-size:21px;margin:0;color:var(--navy)}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0 18px}
 .tab{padding:8px 14px;border-radius:20px;background:#e9edf4;color:var(--navy);font-size:13px;font-weight:600;border:0}
 .tab.active{background:var(--navy);color:#fff}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:18px}
+.tab.add{background:transparent;color:var(--blue);border:1px dashed #b9c4d6}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
 .card .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
 .card .val{font-size:22px;font-weight:700;margin-top:5px;color:var(--navy)}.card.amber .val{color:var(--amber)}
 .card .sub{font-size:11px;color:var(--muted);margin-top:2px}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:18px;overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px;min-width:680px}
-th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
-td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.pill.added{background:#e3f3ea;color:var(--green)}.pill.toadd{background:#fbeede;color:var(--amber)}
-tfoot td{font-weight:700;border-top:2px solid var(--navy);color:var(--navy)}
 .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
 .status{font-size:12px;color:var(--muted)}.status.dirty{color:var(--amber);font-weight:600}.status.ok{color:var(--green)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 12px 12px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:720px}
+th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.cellinput{width:100%;border:1px solid transparent;border-radius:6px;padding:6px 7px;font:inherit;background:transparent}
+.cellinput:hover{border-color:var(--line)}.cellinput:focus{border-color:var(--blue);background:#fff;outline:none}
+.notes{font-size:11px;color:var(--muted);padding:0 7px}
+.invsel{border:1px solid var(--line);border-radius:14px;padding:4px 8px;font-size:12px;font-weight:600;font-family:inherit}
+.invsel.unset{background:var(--abg);color:var(--amber)}.invsel.set{background:var(--gbg);color:var(--green)}
+tfoot td{font-weight:700;border-top:2px solid var(--navy);color:var(--navy)}
 .overlay{position:fixed;inset:0;background:rgba(20,30,50,.55);display:flex;align-items:center;justify-content:center;z-index:60;padding:16px}
 .modal{background:#fff;border-radius:14px;padding:22px;width:440px;max-width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .modal h2{margin:0 0 14px;color:var(--navy);font-size:18px}
@@ -40,8 +44,7 @@ tfoot td{font-weight:700;border-top:2px solid var(--navy);color:var(--navy)}
 .gate .modal{width:340px;text-align:center}.gate input{text-align:center}
 .err{color:var(--red);font-size:13px;min-height:18px;margin-top:6px}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
-.linkbtn{background:none;border:0;color:var(--blue);font-size:13px;text-decoration:underline;padding:0}
-.hint{font-size:11px;color:var(--muted);margin-top:4px}
+.hint{font-size:11px;color:var(--muted)}
 @media(max-width:560px){.row2{grid-template-columns:1fr}}
 </style></head>
 <body>
@@ -63,17 +66,14 @@ tfoot td{font-weight:700;border-top:2px solid var(--navy);color:var(--navy)}
   </header>
   <div class="tabs" id="tabs"></div>
   <div class="cards" id="cards"></div>
-  <div class="bar">
-    <button class="btn p sm" id="addBtn">+ Add expense</button>
-    <button class="btn g sm" id="addTripBtn">+ New trip</button>
-    <span class="hint">Updated 05 Jun 2026 · edits save to GitHub</span>
-  </div>
+  <div class="bar"><button class="btn p sm" id="addBtn">+ Add expense</button>
+    <span class="hint">Updated 05 Jun 2026 · click a description or invoice cell to edit · changes save to GitHub</span></div>
   <div class="panel">
     <table>
-      <thead><tr><th>Date</th><th>Description</th><th>Category</th>
-      <th class="num">Original</th><th class="num">GBP</th><th>Status</th><th>Invoice</th><th></th></tr></thead>
+      <thead><tr><th>Date</th><th>Description (used on invoice)</th><th>Category</th>
+      <th class="num">Original</th><th class="num">GBP</th><th>Invoice</th><th></th></tr></thead>
       <tbody id="rows"></tbody>
-      <tfoot><tr><td colspan="4">Total (GBP)</td><td class="num" id="tot"></td><td colspan="3"></td></tr></tfoot>
+      <tfoot><tr><td colspan="4">Total (GBP)</td><td class="num" id="tot"></td><td colspan="2"></td></tr></tfoot>
     </table>
   </div>
 </div>
@@ -82,142 +82,104 @@ tfoot td{font-weight:700;border-top:2px solid var(--navy);color:var(--navy)}
 const CFG={owner:"ngill-blip",repo:"travel-expenses-tracker",path:"data.enc",branch:"main"};
 const CATS=["Flight","Visa","Hotel","Local Travel","Conference Fee","Mobile/Wi-Fi","Meals","Other"];
 const CCY=["GBP","USD","EUR","KES"];
-const STATUSES=["To add","Added to invoice"];
+const MONTHS=["Jan 2026","Feb 2026","Mar 2026","Apr 2026","May 2026","Jun 2026","Jul 2026","Aug 2026","Sep 2026","Oct 2026","Nov 2026","Dec 2026"];
 const $=id=>document.getElementById(id);
 const enc=new TextEncoder(),dec=new TextDecoder();
 const b64e=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
 const b64d=b=>Uint8Array.from(atob(b),c=>c.charCodeAt(0));
-function gbp(n){return "£"+(n||0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function gbp(n){return "£"+(+n||0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function esc(s){return (s==null?"":""+s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
 
-let DATA={title:"Travel Expenses",trips:[]}, PASS="", SHA=null, CIPHER="", TRIP=0, DIRTY=false;
+let DATA={title:"Travel Expenses",trips:[]},PASS="",SHA=null,CIPHER="",TRIP=0,DIRTY=false;
 
-async function keyFrom(pc,salt,iter){
-  const km=await crypto.subtle.importKey("raw",enc.encode(pc),"PBKDF2",false,["deriveKey"]);
-  return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:iter,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
-}
-async function decryptPayload(b64,pc){
-  const p=JSON.parse(atob(b64));
-  const key=await keyFrom(pc,b64d(p.salt),p.iter);
-  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64d(p.iv)},key,b64d(p.ct));
-  return JSON.parse(dec.decode(pt));
-}
-async function encryptData(obj,pc){
-  const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),iter=150000;
-  const key=await keyFrom(pc,salt,iter);
-  const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,enc.encode(JSON.stringify(obj)));
-  return btoa(JSON.stringify({salt:b64e(salt),iv:b64e(iv),ct:b64e(ct),iter}));
-}
+async function keyFrom(pc,salt,iter){const km=await crypto.subtle.importKey("raw",enc.encode(pc),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:iter,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);}
+async function decryptPayload(b64,pc){const p=JSON.parse(atob(b64));const k=await keyFrom(pc,b64d(p.salt),p.iter);const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64d(p.iv)},k,b64d(p.ct));return JSON.parse(dec.decode(pt));}
+async function encryptData(obj,pc){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),iter=150000;const k=await keyFrom(pc,salt,iter);const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},k,enc.encode(JSON.stringify(obj)));return btoa(JSON.stringify({salt:b64e(salt),iv:b64e(iv),ct:b64e(ct),iter}));}
 
-async function loadCipher(){
-  try{const r=await fetch(CFG.path+"?t="+Date.now());if(r.ok)return (await r.text()).trim();}catch(e){}
-  return "";
-}
-async function unlock(){
-  PASS=$("pc").value; if(!PASS)return;
-  if(CIPHER){
-    try{DATA=await decryptPayload(CIPHER,PASS);}
-    catch(e){$("gerr").textContent="Incorrect passcode";$("pc").value="";return;}
-  }
-  if(!DATA.trips)DATA.trips=[];
-  $("gate").style.display="none";$("app").style.display="block";
-  render();
-}
+async function loadCipher(){try{const r=await fetch(CFG.path+"?t="+Date.now());if(r.ok)return (await r.text()).trim();}catch(e){}return "";}
+async function unlock(){PASS=$("pc").value;if(!PASS)return;
+  if(CIPHER){try{DATA=await decryptPayload(CIPHER,PASS);}catch(e){$("gerr").textContent="Incorrect passcode";$("pc").value="";return;}}
+  if(!DATA.trips)DATA.trips=[];$("gate").style.display="none";$("app").style.display="block";render();}
 
 function trip(){return DATA.trips[TRIP];}
 function render(){
   $("title").textContent=DATA.title||"Travel Expenses";
-  $("tabs").innerHTML=DATA.trips.map((t,i)=>'<button class="tab '+(i===TRIP?"active":"")+'" data-i="'+i+'">'+t.name+'</button>').join("")||'<span class="hint">No trips yet — add one.</span>';
-  document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{TRIP=+b.dataset.i;render();});
+  $("tabs").innerHTML=DATA.trips.map((t,i)=>'<button class="tab '+(i===TRIP?"active":"")+'" data-i="'+i+'">'+esc(t.name)+'</button>').join("")+'<button class="tab add" id="addTripTab">+ New trip</button>';
+  document.querySelectorAll(".tab[data-i]").forEach(b=>b.onclick=()=>{TRIP=+b.dataset.i;render();});
+  $("addTripTab").onclick=addTrip;
   const t=trip();
-  if(!t){$("cards").innerHTML="";$("rows").innerHTML="";$("tot").textContent="";setStatus();return;}
+  if(!t){$("cards").innerHTML='<div class="hint">No trips yet — click “+ New trip”.</div>';$("rows").innerHTML="";$("tot").textContent="";setStatus();return;}
   const ex=t.expenses||[];
   const total=ex.reduce((s,e)=>s+(+e.gbp||0),0);
-  const awa=ex.filter(e=>e.status!=="Added to invoice").reduce((s,e)=>s+(+e.gbp||0),0);
+  const awa=ex.filter(e=>!e.invoice_month).reduce((s,e)=>s+(+e.gbp||0),0);
   $("cards").innerHTML=
     card("Trip total",gbp(total),ex.length+" expenses")+
-    card("Awaiting invoice",gbp(awa),"not yet billed",awa>0?"amber":"")+
-    card("Added to invoice",gbp(total-awa),"")+
-    card("Allocation",t.allocation||"—",t.client||"");
+    card("Awaiting invoice",gbp(awa),ex.filter(e=>!e.invoice_month).length+" not yet billed",awa>0?"amber":"")+
+    card("Invoiced",gbp(total-awa),"")+
+    card("Allocation",esc(t.allocation||"—"),esc(t.client||""));
   $("rows").innerHTML=ex.map((e,i)=>{
-    const orig=e.currency==="GBP"?gbp(e.gbp):((e.currency||"")+" "+(+e.orig_amount||0).toLocaleString());
-    const pill=e.status==="Added to invoice"?'<span class="pill added">Added</span>':'<span class="pill toadd">To add</span>';
-    return '<tr><td>'+(e.date||"")+'</td><td>'+esc(e.description)+(e.notes?'<br><span style="color:#6b7785;font-size:11px">'+esc(e.notes)+'</span>':'')+'</td>'+
+    const orig=e.currency==="GBP"?gbp(e.gbp):((esc(e.currency)||"")+" "+(+e.orig_amount||0).toLocaleString());
+    const opts='<option value="">Not yet</option>'+MONTHS.map(m=>'<option '+(m===e.invoice_month?"selected":"")+'>'+m+'</option>').join("");
+    return '<tr><td>'+esc(e.date||"")+'</td>'+
+      '<td><input class="cellinput" data-i="'+i+'" data-f="description" value="'+esc(e.description)+'">'+(e.notes?'<div class="notes">'+esc(e.notes)+'</div>':'')+'</td>'+
       '<td>'+esc(e.category||"")+'</td><td class="num">'+orig+'</td><td class="num">'+gbp(e.gbp)+'</td>'+
-      '<td>'+pill+'</td><td>'+esc(e.invoice_month||"")+'</td>'+
+      '<td><select class="invsel '+(e.invoice_month?"set":"unset")+'" data-i="'+i+'">'+opts+'</select></td>'+
       '<td class="num"><button class="btn g sm" data-edit="'+i+'">Edit</button> <button class="btn r sm" data-del="'+i+'">✕</button></td></tr>';
   }).join("");
   $("tot").textContent=gbp(total);
+  document.querySelectorAll(".cellinput").forEach(el=>el.onchange=()=>{trip().expenses[+el.dataset.i][el.dataset.f]=el.value;markDirty();});
+  document.querySelectorAll(".invsel").forEach(el=>el.onchange=()=>{trip().expenses[+el.dataset.i].invoice_month=el.value;markDirty();render();});
   document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openExpense(+b.dataset.edit));
   document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Delete this expense?")){trip().expenses.splice(+b.dataset.del,1);markDirty();render();}});
   setStatus();
 }
 function card(l,v,s,cls){return '<div class="card '+(cls||"")+'"><div class="lbl">'+l+'</div><div class="val">'+v+'</div><div class="sub">'+(s||"")+'</div></div>';}
-function esc(s){return (s==null?"":""+s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
 function setStatus(){const s=$("savestatus");if(DIRTY){s.textContent="● Unsaved changes";s.className="status dirty";}else{s.textContent=SHA?"All changes saved":"";s.className="status ok";}}
 function markDirty(){DIRTY=true;setStatus();}
 
-// ---- expense add/edit modal ----
 function modal(html){const o=document.createElement("div");o.className="overlay";o.innerHTML='<div class="modal">'+html+'</div>';document.body.appendChild(o);return o;}
-function field(id,label,val,type){return '<div class="fld"><label>'+label+'</label><input id="'+id+'" type="'+(type||"text")+'" value="'+esc(val||"")+'"></div>';}
-function sel(id,label,val,opts){return '<div class="fld"><label>'+label+'</label><select id="'+id+'">'+opts.map(o=>'<option '+(o===val?"selected":"")+'>'+o+'</option>').join("")+'</select></div>';}
+function field(id,l,v,t){return '<div class="fld"><label>'+l+'</label><input id="'+id+'" type="'+(t||"text")+'" value="'+esc(v||"")+'"></div>';}
+function sel(id,l,v,opts){return '<div class="fld"><label>'+l+'</label><select id="'+id+'">'+opts.map(o=>'<option '+(o===v?"selected":"")+'>'+o+'</option>').join("")+'</select></div>';}
 function openExpense(i){
-  const e=i==null?{date:new Date().toISOString().slice(0,10),currency:"GBP",status:"To add"}:Object.assign({},trip().expenses[i]);
+  const e=i==null?{date:new Date().toISOString().slice(0,10),currency:"GBP",invoice_month:""}:Object.assign({},trip().expenses[i]);
   const o=modal('<h2>'+(i==null?"Add":"Edit")+' expense</h2>'+
     field("e_date","Date",e.date,"date")+
-    field("e_desc","Description",e.description)+
+    '<div class="fld"><label>Description (used on the invoice)</label><input id="e_desc" value="'+esc(e.description)+'"></div>'+
     sel("e_cat","Category",e.category||"Other",CATS)+
     '<div class="row2">'+field("e_orig","Original amount",e.orig_amount,"number")+sel("e_ccy","Currency",e.currency||"GBP",CCY)+'</div>'+
     field("e_gbp","Amount in GBP",e.gbp,"number")+
-    '<div class="row2">'+sel("e_status","Status",e.status||"To add",STATUSES)+field("e_inv","Invoice month",e.invoice_month)+'</div>'+
+    sel("e_inv","Invoice (which invoice it's billed on)",e.invoice_month||"Not yet",["Not yet"].concat(MONTHS))+
     field("e_receipt","Receipt file / ref",e.receipt)+
-    '<div class="fld"><label>Notes</label><textarea id="e_notes" rows="2">'+esc(e.notes||"")+'</textarea></div>'+
+    '<div class="fld"><label>Notes (context only — not on invoice)</label><textarea id="e_notes" rows="2">'+esc(e.notes||"")+'</textarea></div>'+
     '<div class="modal-actions"><button class="btn g" id="e_cancel">Cancel</button><button class="btn p" id="e_save">Save</button></div>');
   o.querySelector("#e_cancel").onclick=()=>o.remove();
-  o.querySelector("#e_save").onclick=()=>{
-    const ne={date:$("e_date").value,description:$("e_desc").value,category:$("e_cat").value,
-      orig_amount:parseFloat($("e_orig").value)||0,currency:$("e_ccy").value,gbp:parseFloat($("e_gbp").value)||0,
-      status:$("e_status").value,invoice_month:$("e_inv").value,receipt:$("e_receipt").value,notes:$("e_notes").value};
-    if(i==null)trip().expenses.push(ne);else trip().expenses[i]=ne;
-    o.remove();markDirty();render();
-  };
+  o.querySelector("#e_save").onclick=()=>{const inv=$("e_inv").value;
+    const ne={date:$("e_date").value,description:$("e_desc").value,category:$("e_cat").value,orig_amount:parseFloat($("e_orig").value)||0,currency:$("e_ccy").value,gbp:parseFloat($("e_gbp").value)||0,invoice_month:inv==="Not yet"?"":inv,receipt:$("e_receipt").value,notes:$("e_notes").value};
+    if(i==null)trip().expenses.push(ne);else trip().expenses[i]=ne;o.remove();markDirty();render();};
 }
-$("addBtn").onclick=()=>{if(!trip()){alert("Add a trip first.");return;}openExpense(null);};
-$("addTripBtn").onclick=()=>{
-  const o=modal('<h2>New trip</h2>'+field("t_name","Trip / client name","")+field("t_client","Client (optional)","")+field("t_alloc","Allocation (optional)","60/30/10")+
-    '<div class="modal-actions"><button class="btn g" id="t_cancel">Cancel</button><button class="btn p" id="t_save">Add</button></div>');
+function addTrip(){const o=modal('<h2>New trip</h2>'+field("t_name","Trip / client name","")+field("t_client","Client (optional)","")+field("t_alloc","Allocation (optional)","")+
+  '<div class="modal-actions"><button class="btn g" id="t_cancel">Cancel</button><button class="btn p" id="t_save">Add</button></div>');
   o.querySelector("#t_cancel").onclick=()=>o.remove();
-  o.querySelector("#t_save").onclick=()=>{const n=$("t_name").value.trim();if(!n)return;DATA.trips.push({name:n,client:$("t_client").value,allocation:$("t_alloc").value,expenses:[]});TRIP=DATA.trips.length-1;o.remove();markDirty();render();};
-};
+  o.querySelector("#t_save").onclick=()=>{const n=$("t_name").value.trim();if(!n)return;DATA.trips.push({name:n,client:$("t_client").value,allocation:$("t_alloc").value,expenses:[]});TRIP=DATA.trips.length-1;o.remove();markDirty();render();};}
+$("addBtn").onclick=()=>{if(!trip()){alert("Add a trip first.");return;}openExpense(null);};
 
-// ---- settings (PAT) ----
-$("settingsBtn").onclick=()=>{
-  const cur=localStorage.getItem("tet_pat")||"";
-  const o=modal('<h2>GitHub token</h2><p class="hint">A fine-grained token with Contents: read &amp; write on <b>'+CFG.owner+"/"+CFG.repo+'</b>. Stored only in this browser; needed to save changes back.</p>'+
+$("settingsBtn").onclick=()=>{const cur=localStorage.getItem("tet_pat")||"";
+  const o=modal('<h2>GitHub token</h2><p class="hint">Fine-grained token with Contents: read &amp; write on <b>'+CFG.owner+"/"+CFG.repo+'</b>. Stored only in this browser; needed to save.</p>'+
     '<div class="fld"><input id="pat" type="password" value="'+esc(cur)+'" placeholder="github_pat_..."></div>'+
     '<div class="modal-actions"><button class="btn r" id="pat_clear">Clear</button><button class="btn p" id="pat_save">Save token</button></div>');
   o.querySelector("#pat_clear").onclick=()=>{localStorage.removeItem("tet_pat");o.remove();};
-  o.querySelector("#pat_save").onclick=()=>{localStorage.setItem("tet_pat",$("pat").value.trim());o.remove();};
-};
+  o.querySelector("#pat_save").onclick=()=>{localStorage.setItem("tet_pat",$("pat").value.trim());o.remove();};};
 
-// ---- save to GitHub ----
-async function save(){
-  const pat=localStorage.getItem("tet_pat");
-  if(!pat){alert("Add a GitHub token first (⚙ Token).");return;}
+async function save(){const pat=localStorage.getItem("tet_pat");if(!pat){alert("Add a GitHub token first (⚙ Token).");return;}
   $("saveBtn").disabled=true;$("savestatus").textContent="Saving…";$("savestatus").className="status";
-  try{
-    const body=await encryptData(DATA,PASS);
-    const api="https://api.github.com/repos/"+CFG.owner+"/"+CFG.repo+"/contents/"+CFG.path;
-    // get latest sha
+  try{const body=await encryptData(DATA,PASS);const api="https://api.github.com/repos/"+CFG.owner+"/"+CFG.repo+"/contents/"+CFG.path;
     try{const g=await fetch(api+"?ref="+CFG.branch,{headers:{Authorization:"Bearer "+pat,Accept:"application/vnd.github+json"}});if(g.ok)SHA=(await g.json()).sha;}catch(e){}
-    const r=await fetch(api,{method:"PUT",headers:{Authorization:"Bearer "+pat,Accept:"application/vnd.github+json"},
-      body:JSON.stringify({message:"Update expenses "+new Date().toISOString(),content:btoa(body),sha:SHA||undefined,branch:CFG.branch})});
-    if(!r.ok){const t=await r.text();throw new Error(r.status+" "+t);}
+    const r=await fetch(api,{method:"PUT",headers:{Authorization:"Bearer "+pat,Accept:"application/vnd.github+json"},body:JSON.stringify({message:"Update expenses "+new Date().toISOString(),content:btoa(body),sha:SHA||undefined,branch:CFG.branch})});
+    if(!r.ok)throw new Error(r.status+" "+(await r.text()));
     SHA=(await r.json()).content.sha;CIPHER=body;DIRTY=false;setStatus();
   }catch(e){alert("Save failed: "+e.message);$("savestatus").textContent="Save failed";}
-  $("saveBtn").disabled=false;
-}
-$("saveBtn").onclick=save;
-$("unlock").onclick=unlock;$("pc").addEventListener("keydown",e=>{if(e.key==="Enter")unlock();});
+  $("saveBtn").disabled=false;}
+$("saveBtn").onclick=save;$("unlock").onclick=unlock;$("pc").addEventListener("keydown",e=>{if(e.key==="Enter")unlock();});
 window.addEventListener("beforeunload",e=>{if(DIRTY){e.preventDefault();e.returnValue="";}});
 (async()=>{CIPHER=await loadCipher();})();
 </script></body></html>
