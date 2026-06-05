@@ -92,7 +92,9 @@ tfoot td{font-weight:700;border-top:2px solid var(--navy);color:var(--navy)}
   <div class="tabs" id="tabs"></div>
   <div class="cards" id="cards"></div>
   <div class="bar"><button class="btn p sm" id="addBtn">+ Add expense</button>
-    <span class="hint">Updated 05 Jun 2026 · click a description or invoice cell to edit · changes save to GitHub</span></div>
+    <button class="btn g sm" id="photoBtn">📷 Add receipt</button>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
+    <span class="hint">Updated 05 Jun 2026 · snap a receipt or click a cell to edit · saves to GitHub</span></div>
   <div class="panel">
     <table>
       <thead><tr><th>Date</th><th>Description (used on invoice)</th><th>Category</th>
@@ -101,6 +103,7 @@ tfoot td{font-weight:700;border-top:2px solid var(--navy);color:var(--navy)}
       <tfoot><tr><td colspan="4">Total (GBP)</td><td class="num" id="tot"></td><td colspan="2"></td></tr></tfoot>
     </table>
   </div>
+  <button id="fab" title="Add receipt photo">📷</button>
 </div>
 
 <script>
@@ -187,6 +190,25 @@ function addTrip(){const o=modal('<h2>New trip</h2>'+field("t_name","Trip / clie
   o.querySelector("#t_cancel").onclick=()=>o.remove();
   o.querySelector("#t_save").onclick=()=>{const n=$("t_name").value.trim();if(!n)return;DATA.trips.push({name:n,client:$("t_client").value,allocation:$("t_alloc").value,expenses:[]});TRIP=DATA.trips.length-1;o.remove();markDirty();render();};}
 $("addBtn").onclick=()=>{if(!trip()){alert("Add a trip first.");return;}openExpense(null);};
+
+function loadImg(file){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(file);});}
+async function downscale(file,max){const img=await loadImg(file);const s=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement("canvas");c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext("2d").drawImage(img,0,0,c.width,c.height);return await new Promise(r=>c.toBlob(r,"image/jpeg",0.82));}
+async function encryptBytes(bytes,pc){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),iter=150000;const k=await keyFrom(pc,salt,iter);const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},k,bytes);return btoa(JSON.stringify({salt:b64e(salt),iv:b64e(iv),ct:b64e(ct),iter}));}
+async function addPhoto(file){if(!file)return;const pat=localStorage.getItem("tet_pat");if(!pat){alert("Add a GitHub token first (⚙ Token).");return;}if(!trip()){alert("Add a trip first.");return;}
+  try{$("savestatus").textContent="Uploading photo…";$("savestatus").className="status";
+    const blob=await downscale(file,1600);const buf=new Uint8Array(await blob.arrayBuffer());
+    const payload=await encryptBytes(buf,PASS);
+    const fname="receipts/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+".enc";
+    const api="https://api.github.com/repos/"+CFG.owner+"/"+CFG.repo+"/contents/"+fname;
+    const r=await fetch(api,{method:"PUT",headers:{Authorization:"Bearer "+pat,Accept:"application/vnd.github+json"},body:JSON.stringify({message:"Add receipt photo",content:btoa(payload),branch:CFG.branch})});
+    if(!r.ok)throw new Error(r.status+" "+(await r.text()));
+    trip().expenses.push({date:new Date().toISOString().slice(0,10),description:"⏳ Pending receipt",category:"Other",orig_amount:0,currency:"GBP",gbp:0,invoice_month:"",receipt:fname,pending:true});
+    render();await save();
+    alert("Receipt uploaded — I'll fill in the details automatically on the next run.");
+  }catch(e){alert("Photo upload failed: "+e.message);$("savestatus").textContent="Upload failed";}}
+$("photoBtn").onclick=()=>$("photoInput").click();
+$("photoInput").onchange=e=>{addPhoto(e.target.files[0]);e.target.value="";};
+$("fab").onclick=()=>$("photoInput").click();
 
 $("settingsBtn").onclick=()=>{const cur=localStorage.getItem("tet_pat")||"";
   const o=modal('<h2>GitHub token</h2><p class="hint">Fine-grained token with Contents: read &amp; write on <b>'+CFG.owner+"/"+CFG.repo+'</b>. Stored only in this browser; needed to save.</p>'+
