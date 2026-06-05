@@ -45,7 +45,32 @@ tfoot td{font-weight:700;border-top:2px solid var(--navy);color:var(--navy)}
 .err{color:var(--red);font-size:13px;min-height:18px;margin-top:6px}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
 .hint{font-size:11px;color:var(--muted)}
-@media(max-width:560px){.row2{grid-template-columns:1fr}}
+.row2{}
+#fab{display:none;position:fixed;right:18px;bottom:18px;z-index:40;border:0;border-radius:50%;width:58px;height:58px;font-size:30px;line-height:1;background:var(--blue);color:#fff;box-shadow:0 6px 20px rgba(46,84,150,.5);align-items:center;justify-content:center}
+@media(max-width:620px){
+ .row2{grid-template-columns:1fr}
+ .wrap{padding:16px 12px 90px}
+ h1{font-size:19px}
+ .cards{grid-template-columns:1fr 1fr;gap:9px}
+ .card .val{font-size:19px}
+ .panel{padding:0;border:0;background:transparent;overflow:visible}
+ table{min-width:0}
+ table,tbody,tr,td{display:block;width:100%}
+ thead,tfoot{display:none}
+ tr{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:11px;padding:6px 13px}
+ td{border:0;padding:7px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}
+ td+td{border-top:1px solid var(--line)}
+ td::before{content:attr(data-label);font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);font-weight:600;flex:0 0 auto}
+ td[data-label="Description"]{display:block;border-top:0}
+ td[data-label="Description"]::before{display:block;margin-bottom:3px}
+ td[data-label="Description"] .cellinput{font-size:16px;font-weight:600;padding-left:0;border-color:var(--line)}
+ td[data-label="Description"] .notes{padding-left:0}
+ td.num{justify-content:space-between;text-align:right}
+ td[data-act]{justify-content:flex-end;gap:8px}
+ td[data-act]::before{display:none}
+ #fab{display:flex}
+ .bar .hint{display:none}
+}
 </style></head>
 <body>
 <div id="gate" class="overlay gate"><div class="modal">
@@ -120,11 +145,11 @@ function render(){
   $("rows").innerHTML=ex.map((e,i)=>{
     const orig=e.currency==="GBP"?gbp(e.gbp):((esc(e.currency)||"")+" "+(+e.orig_amount||0).toLocaleString());
     const opts='<option value="">Not yet</option>'+MONTHS.map(m=>'<option '+(m===e.invoice_month?"selected":"")+'>'+m+'</option>').join("");
-    return '<tr><td>'+esc(e.date||"")+'</td>'+
-      '<td><input class="cellinput" data-i="'+i+'" data-f="description" value="'+esc(e.description)+'">'+(e.notes?'<div class="notes">'+esc(e.notes)+'</div>':'')+'</td>'+
-      '<td>'+esc(e.category||"")+'</td><td class="num">'+orig+'</td><td class="num">'+gbp(e.gbp)+'</td>'+
-      '<td><select class="invsel '+(e.invoice_month?"set":"unset")+'" data-i="'+i+'">'+opts+'</select></td>'+
-      '<td class="num"><button class="btn g sm" data-edit="'+i+'">Edit</button> <button class="btn r sm" data-del="'+i+'">✕</button></td></tr>';
+    return '<tr><td data-label="Date">'+esc(e.date||"")+'</td>'+
+      '<td data-label="Description"><input class="cellinput" data-i="'+i+'" data-f="description" value="'+esc(e.description)+'">'+(e.notes?'<div class="notes">'+esc(e.notes)+'</div>':'')+'</td>'+
+      '<td data-label="Category">'+esc(e.category||"")+'</td><td class="num" data-label="Original">'+orig+'</td><td class="num" data-label="GBP">'+gbp(e.gbp)+'</td>'+
+      '<td data-label="Invoice"><select class="invsel '+(e.invoice_month?"set":"unset")+'" data-i="'+i+'">'+opts+'</select></td>'+
+      '<td class="num" data-act><button class="btn g sm" data-edit="'+i+'">Edit</button> <button class="btn r sm" data-del="'+i+'">✕</button></td></tr>';
   }).join("");
   $("tot").textContent=gbp(total);
   document.querySelectorAll(".cellinput").forEach(el=>el.onchange=()=>{trip().expenses[+el.dataset.i][el.dataset.f]=el.value;markDirty();});
