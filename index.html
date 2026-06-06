@@ -153,8 +153,10 @@ function render(){
     card("Allocation",esc(t.allocation||"—"),esc(t.client||""));
   $("rows").innerHTML=ex.map((e,i)=>{
     const invopts='<option value="">Not yet</option>'+MONTHS.map(m=>'<option '+(m===e.invoice_month?"selected":"")+'>'+m+'</option>').join("");
-    const catopts=CATS.map(c=>'<option '+(c===e.category?"selected":"")+'>'+c+'</option>').join("");
-    const ccyopts=CCY.map(c=>'<option '+(c===e.currency?"selected":"")+'>'+c+'</option>').join("");
+    const catL=(e.category&&!CATS.includes(e.category))?[e.category].concat(CATS):CATS;
+    const catopts=catL.map(c=>'<option '+(c===e.category?"selected":"")+'>'+c+'</option>').join("");
+    const ccyL=(e.currency&&!CCY.includes(e.currency))?[e.currency].concat(CCY):CCY;
+    const ccyopts=ccyL.map(c=>'<option '+(c===e.currency?"selected":"")+'>'+c+'</option>').join("");
     return '<tr>'+
       '<td data-label="Date"><input class="cellinput dt" type="date" data-i="'+i+'" data-f="date" value="'+esc(e.date||"")+'"></td>'+
       '<td data-label="Description"><input class="cellinput desc" data-i="'+i+'" data-f="description" placeholder="Description (on invoice)" value="'+esc(e.description)+'"><input class="cellinput notesin" data-i="'+i+'" data-f="notes" placeholder="Notes (not on invoice)" value="'+esc(e.notes||"")+'"></td>'+
