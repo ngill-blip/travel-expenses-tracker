@@ -31,6 +31,12 @@ th{font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--mute
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .cellinput{width:100%;border:1px solid transparent;border-radius:6px;padding:6px 7px;font:inherit;background:transparent}
 .cellinput:hover{border-color:var(--line)}.cellinput:focus{border-color:var(--blue);background:#fff;outline:none}
+.cellinput.desc{font-weight:600}
+.notesin{font-size:11px;color:var(--muted)}
+.amt{width:84px}.gbpin{width:84px;text-align:right}
+.cellsel{border:1px solid transparent;border-radius:6px;padding:5px 6px;font:inherit;background:transparent;max-width:160px}
+.cellsel:hover{border-color:var(--line)}.cellsel:focus{border-color:var(--blue);background:#fff;outline:none}
+.cellsel.ccy{width:62px;margin-left:4px}
 .notes{font-size:11px;color:var(--muted);padding:0 7px}
 .invsel{border:1px solid var(--line);border-radius:14px;padding:4px 8px;font-size:12px;font-weight:600;font-family:inherit}
 .invsel.unset{background:var(--abg);color:var(--amber)}.invsel.set{background:var(--gbg);color:var(--green)}
@@ -146,18 +152,22 @@ function render(){
     card("Invoiced",gbp(total-awa),"")+
     card("Allocation",esc(t.allocation||"—"),esc(t.client||""));
   $("rows").innerHTML=ex.map((e,i)=>{
-    const orig=e.currency==="GBP"?gbp(e.gbp):((esc(e.currency)||"")+" "+(+e.orig_amount||0).toLocaleString());
-    const opts='<option value="">Not yet</option>'+MONTHS.map(m=>'<option '+(m===e.invoice_month?"selected":"")+'>'+m+'</option>').join("");
-    return '<tr><td data-label="Date">'+esc(e.date||"")+'</td>'+
-      '<td data-label="Description"><input class="cellinput" data-i="'+i+'" data-f="description" value="'+esc(e.description)+'">'+(e.notes?'<div class="notes">'+esc(e.notes)+'</div>':'')+'</td>'+
-      '<td data-label="Category">'+esc(e.category||"")+'</td><td class="num" data-label="Original">'+orig+'</td><td class="num" data-label="GBP">'+gbp(e.gbp)+'</td>'+
-      '<td data-label="Invoice"><select class="invsel '+(e.invoice_month?"set":"unset")+'" data-i="'+i+'">'+opts+'</select></td>'+
-      '<td class="num" data-act><button class="btn g sm" data-edit="'+i+'">Edit</button> <button class="btn r sm" data-del="'+i+'">✕</button></td></tr>';
+    const invopts='<option value="">Not yet</option>'+MONTHS.map(m=>'<option '+(m===e.invoice_month?"selected":"")+'>'+m+'</option>').join("");
+    const catopts=CATS.map(c=>'<option '+(c===e.category?"selected":"")+'>'+c+'</option>').join("");
+    const ccyopts=CCY.map(c=>'<option '+(c===e.currency?"selected":"")+'>'+c+'</option>').join("");
+    return '<tr>'+
+      '<td data-label="Date"><input class="cellinput dt" type="date" data-i="'+i+'" data-f="date" value="'+esc(e.date||"")+'"></td>'+
+      '<td data-label="Description"><input class="cellinput desc" data-i="'+i+'" data-f="description" placeholder="Description (on invoice)" value="'+esc(e.description)+'"><input class="cellinput notesin" data-i="'+i+'" data-f="notes" placeholder="Notes (not on invoice)" value="'+esc(e.notes||"")+'"></td>'+
+      '<td data-label="Category"><select class="cellsel" data-i="'+i+'" data-f="category">'+catopts+'</select></td>'+
+      '<td class="num" data-label="Original"><input class="cellinput amt" type="number" step="0.01" data-i="'+i+'" data-f="orig_amount" value="'+(e.orig_amount!=null?e.orig_amount:"")+'"><select class="cellsel ccy" data-i="'+i+'" data-f="currency">'+ccyopts+'</select></td>'+
+      '<td class="num" data-label="GBP"><input class="cellinput gbpin" type="number" step="0.01" data-i="'+i+'" data-f="gbp" value="'+(e.gbp!=null?e.gbp:"")+'"></td>'+
+      '<td data-label="Invoice"><select class="invsel '+(e.invoice_month?"set":"unset")+'" data-i="'+i+'">'+invopts+'</select></td>'+
+      '<td class="num" data-act><button class="btn r sm" data-del="'+i+'">✕</button></td></tr>';
   }).join("");
   $("tot").textContent=gbp(total);
-  document.querySelectorAll(".cellinput").forEach(el=>el.onchange=()=>{trip().expenses[+el.dataset.i][el.dataset.f]=el.value;markDirty();});
+  document.querySelectorAll(".cellinput").forEach(el=>el.onchange=()=>{const x=trip().expenses[+el.dataset.i],f=el.dataset.f;x[f]=(f==="gbp"||f==="orig_amount")?(parseFloat(el.value)||0):el.value;markDirty();if(f==="gbp")render();});
+  document.querySelectorAll(".cellsel").forEach(el=>el.onchange=()=>{trip().expenses[+el.dataset.i][el.dataset.f]=el.value;markDirty();});
   document.querySelectorAll(".invsel").forEach(el=>el.onchange=()=>{trip().expenses[+el.dataset.i].invoice_month=el.value;markDirty();render();});
-  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openExpense(+b.dataset.edit));
   document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Delete this expense?")){trip().expenses.splice(+b.dataset.del,1);markDirty();render();}});
   setStatus();
 }
@@ -189,7 +199,7 @@ function addTrip(){const o=modal('<h2>New trip</h2>'+field("t_name","Trip / clie
   '<div class="modal-actions"><button class="btn g" id="t_cancel">Cancel</button><button class="btn p" id="t_save">Add</button></div>');
   o.querySelector("#t_cancel").onclick=()=>o.remove();
   o.querySelector("#t_save").onclick=()=>{const n=$("t_name").value.trim();if(!n)return;DATA.trips.push({name:n,client:$("t_client").value,allocation:$("t_alloc").value,expenses:[]});TRIP=DATA.trips.length-1;o.remove();markDirty();render();};}
-$("addBtn").onclick=()=>{if(!trip()){alert("Add a trip first.");return;}openExpense(null);};
+$("addBtn").onclick=()=>{if(!trip()){alert("Add a trip first.");return;}trip().expenses.push({date:new Date().toISOString().slice(0,10),description:"",category:"Other",orig_amount:0,currency:"GBP",gbp:0,invoice_month:"",notes:""});markDirty();render();};
 
 function loadImg(file){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(file);});}
 async function downscale(file,max){const img=await loadImg(file);const s=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement("canvas");c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext("2d").drawImage(img,0,0,c.width,c.height);return await new Promise(r=>c.toBlob(r,"image/jpeg",0.82));}
