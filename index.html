@@ -52,6 +52,11 @@ tfoot td{font-weight:700;border-top:2px solid var(--navy);color:var(--navy)}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
 .hint{font-size:11px;color:var(--muted)}
 .row2{}
+#mlist{display:none}
+.mrow{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:12px 6px;border-bottom:1px solid var(--line)}
+.mrow .md{font-weight:600;flex:1;min-width:0}
+.mrow .ma{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--navy);font-weight:600}
+.mrow .ma small{display:block;font-weight:400;color:var(--muted);font-size:11px}
 #fab{display:none;position:fixed;right:18px;bottom:18px;z-index:40;border:0;border-radius:50%;width:58px;height:58px;font-size:30px;line-height:1;background:var(--blue);color:#fff;box-shadow:0 6px 20px rgba(46,84,150,.5);align-items:center;justify-content:center}
 @media(max-width:620px){
  .row2{grid-template-columns:1fr}
@@ -59,7 +64,8 @@ tfoot td{font-weight:700;border-top:2px solid var(--navy);color:var(--navy)}
  h1{font-size:19px}
  .cards{grid-template-columns:1fr 1fr;gap:9px}
  .card .val{font-size:19px}
- .panel{padding:0;border:0;background:transparent;overflow:visible}
+ .panel{display:none}
+ #mlist{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 10px}
  table{min-width:0}
  table,tbody,tr,td{display:block;width:100%}
  thead,tfoot{display:none}
@@ -109,6 +115,7 @@ tfoot td{font-weight:700;border-top:2px solid var(--navy);color:var(--navy)}
       <tfoot><tr><td colspan="4">Total (GBP)</td><td class="num" id="tot"></td><td colspan="2"></td></tr></tfoot>
     </table>
   </div>
+  <div id="mlist"></div>
   <button id="fab" title="Add receipt photo">📷</button>
 </div>
 
@@ -167,6 +174,7 @@ function render(){
       '<td class="num" data-act><button class="btn r sm" data-del="'+i+'">✕</button></td></tr>';
   }).join("");
   $("tot").textContent=gbp(total);
+  $("mlist").innerHTML=ex.map(e=>{const o=(e.currency&&e.currency!=="GBP")?(esc(e.currency)+" "+(+e.orig_amount||0).toLocaleString()):"";return '<div class="mrow"><span class="md">'+esc(e.description||"(no description)")+'</span><span class="ma">'+gbp(e.gbp)+(o?'<small>'+o+'</small>':'')+'</span></div>';}).join("")||'<div class="hint" style="padding:12px 6px">No expenses yet.</div>';
   document.querySelectorAll(".cellinput").forEach(el=>el.onchange=()=>{const x=trip().expenses[+el.dataset.i],f=el.dataset.f;x[f]=(f==="gbp"||f==="orig_amount")?(parseFloat(el.value)||0):el.value;markDirty();if(f==="gbp")render();});
   document.querySelectorAll(".cellsel").forEach(el=>el.onchange=()=>{trip().expenses[+el.dataset.i][el.dataset.f]=el.value;markDirty();});
   document.querySelectorAll(".invsel").forEach(el=>el.onchange=()=>{trip().expenses[+el.dataset.i].invoice_month=el.value;markDirty();render();});
